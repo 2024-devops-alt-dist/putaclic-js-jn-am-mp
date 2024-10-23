@@ -182,7 +182,6 @@ function randomizePosition(target) {
 function stopGame() {
     gameActive = false;
     clearInterval(countdown);
-    clearInterval(addTargets);
     countdownDisplay.textContent = "Time's up!";
     gameContainer.classList.add('hide');
     easyModeButton.style.display = 'block';
