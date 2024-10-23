@@ -38,7 +38,7 @@ body {
     flex-direction: column;
 }
 
-#countdown {
+#countdown, #score {
     font-size: 24px;
     margin-top: 10px;
 }
