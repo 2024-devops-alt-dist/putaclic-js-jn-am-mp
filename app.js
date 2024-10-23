@@ -11,7 +11,7 @@ const hardModeButton = document.getElementById("hardMode");
 let countdown;
 
 
-const targetLifecycle = 2000;
+const targetLifecycle = 3000;
 
 let totalTime = 10;
 
@@ -29,46 +29,43 @@ const targetTypes = [
 
 // Selection de difficulté
 easyModeButton.addEventListener("click", function() {
-  selectDifficulty("easy");
+    selectDifficulty("easy");
 });
 
 normalModeButton.addEventListener("click", function() {
-  selectDifficulty("normal");
+    selectDifficulty("normal");
 });
 
 hardModeButton.addEventListener("click", function() {
-  selectDifficulty("hard");
+    selectDifficulty("hard");
 });
 
 /**
  * Défini la difficulté du jeu, change les variables en fonction de la difficulté et lance le jeu
  */
 function selectDifficulty(difficulty) {
-  switch (difficulty) {
-    case 'easy':
-      targetCount = 3;
-      totalTime = 10;
+    switch (difficulty) {
+        case 'easy':
+        targetCount = 1;
+        totalTime = 10;
+        startGame();
+        break;
 
-      startGame();
-      break;
+        case 'normal':
+        targetCount = 5;
+        totalTime = 7;
+        startGame();
+        break;
 
-    case 'normal':
-      targetCount = 5;
-      totalTime = 7;
+        case 'hard':
+        targetCount = 7;
+        totalTime = 5;
+        startGame();
+        break;
 
-      startGame();
-      break;
-
-    case 'hard':
-      targetCount = 7;
-      totalTime = 5;
-
-      startGame();
-      break;
-
-    default: 
-    alert("Pas de difficulté selectionnée");
-  }
+        default: 
+        alert("Pas de difficulté selectionnée");
+    }
 }
 
 function startGame() {
@@ -85,14 +82,6 @@ function startGame() {
     for (let i = 0; i < targetCount; i++) {
       createTarget();
     }
-    //add new target every one second
-    addTargets = setInterval(() => {
-      let targetsNb = Math.floor(Math.random()*4)
-      for (let i = 0; i < targetsNb; i++){
-        createTarget();
-      }
-    },Math.random()*1500); 
-        
 
     let timeLeft = totalTime; // Start countdown from total time
     updateProgressBar(timeLeft);
@@ -123,7 +112,8 @@ function createTarget() {
     // If the target is not clicked after 5 seconds, it disappears
     targetTimer = setTimeout(() => {
         if (gameActive) {
-        target.style.display = 'none';
+        target.remove();
+        createTarget();
         }
     }, targetLifecycle);
 
@@ -131,12 +121,11 @@ function createTarget() {
     
     target.addEventListener('click', () => {
             if (!gameActive) return;
-            //I removed the apparition of another target when it was successfully clicked
-            target.style.display = 'none';
+        
+            target.remove();
             score = Math.max(0, score + targetType.points);
 
             clearTimeout(targetTimer); // Cancel the lifecycle timer when clicked
-
             setTimeout(() => {
                 randomizePosition(target);
                 target.style.display = 'block';
@@ -144,8 +133,12 @@ function createTarget() {
               }, 500); // Reappear after 0.5s
 
             updateScore();
+            createTarget();
     });
-
+        // Move the target at regular intervals with smooth animation
+    setInterval(() => {
+        randomizeMovement(target); // Move the target within a 50px radius
+    }, 1000);
 }
 
 function resetTargetLifecycle(target) {
@@ -167,6 +160,7 @@ function randomizePosition(target) {
 function stopGame() {
     gameActive = false;
     clearInterval(countdown);
+    clearInterval(addTargets);
     countdownDisplay.textContent = "Time's up!";
     gameContainer.classList.add('hide');
     easyModeButton.style.display = 'block';
@@ -181,4 +175,20 @@ function updateScore() {
 function updateProgressBar(timeLeft) {
     const progress = (timeLeft / totalTime) * 100;
     progressBar.style.width = `${progress}%`;
+}
+
+function randomizeMovement(target) {
+    // Get the current position of the target
+    const currentX = parseFloat(target.style.left) || 0;
+    const currentY = parseFloat(target.style.top) || 0;
+
+    // Calculate the new position within a 50px radius of the current position
+    const deltaX = (Math.random() - 0.5) * 2 * 50;
+    const deltaY = (Math.random() - 0.5) * 2 * 50;
+
+    const newX = Math.min(Math.max(currentX + deltaX, 0), window.innerWidth - 50); // Prevent overflow
+    const newY = Math.min(Math.max(currentY + deltaY, 0), window.innerHeight - 50); // Prevent overflow
+
+    target.style.left = `${newX}px`;
+    target.style.top = `${newY}px`;
 }
