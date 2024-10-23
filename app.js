@@ -2,23 +2,33 @@ const gameContainer = document.getElementById('gameContainer');
 const startButton = document.getElementById('startButton');
 const countdownDisplay = document.getElementById('countdown');
 const scoreDisplay = document.getElementById('score');
+
 let countdown;
 let timeLeft = 20;
 countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
+
 const targetCount = 5;
 let gameActive = false;
 let score = 0;
 
+const targetTypes = [
+    { points: 1, color: 'red' },
+    { points: 5, color: 'green' },
+    { points: -2, color: 'black' }
+];
+
 function createTarget() {
     const target = document.createElement('div');
+    const targetType = targetTypes[Math.floor(Math.random() * targetTypes.length)];
     target.classList.add('target');
+    target.style.backgroundColor = targetType.color;
     randomizePosition(target);
     gameContainer.appendChild(target);
 
     target.addEventListener('click', () => {
             if (!gameActive) return;
             target.style.display = 'none';
-            score++;
+            score = Math.max(0, score + targetType.points);
             updateScore();
             setTimeout(() => {
                 randomizePosition(target);
