@@ -8,6 +8,10 @@ const easyModeButton = document.getElementById("easyMode");
 const normalModeButton = document.getElementById("normalMode");
 const hardModeButton = document.getElementById("hardMode");
 
+const clickSound1 = document.getElementById('clickSound1');
+const clickSound2 = document.getElementById('clickSound2');
+const clickSound3 = document.getElementById('clickSound3');
+
 let countdown;
 
 
@@ -130,20 +134,38 @@ function createTarget() {
 
     
     target.addEventListener('click', () => {
-            if (!gameActive) return;
-            //I removed the apparition of another target when it was successfully clicked
-            target.style.display = 'none';
-            score = Math.max(0, score + targetType.points);
+      if (!gameActive) return;
+      if (targetType.imgUrl === "url('./img/sombrero.jpg')")
+      {
+        clickSound1.currentTime = 0;
+        clickSound1.play();
+      }
 
-            clearTimeout(targetTimer); // Cancel the lifecycle timer when clicked
+      if (targetType.imgUrl === "url('./img/pinata.jpg')")
+      {
+        clickSound2.currentTime = 0;
+        clickSound2.play();
+      }
 
-            setTimeout(() => {
-                randomizePosition(target);
-                target.style.display = 'block';
-                resetTargetLifecycle(target); // Reset the lifecycle
-              }, 500); // Reappear after 0.5s
+      if (targetType.imgUrl === "url('./img/cactus.jpg')")
+      {
+        clickSound3.currentTime = 0;
+        clickSound3.play();
+      }
 
-            updateScore();
+      //I removed the apparition of another target when it was successfully clicked
+      target.style.display = 'none';
+      score = Math.max(0, score + targetType.points);
+
+      clearTimeout(targetTimer); // Cancel the lifecycle timer when clicked
+
+      setTimeout(() => {
+          randomizePosition(target);
+          target.style.display = 'block';
+          resetTargetLifecycle(target); // Reset the lifecycle
+        }, 500); // Reappear after 0.5s
+
+      updateScore();
     });
 
 }
