@@ -2,10 +2,12 @@ const gameContainer = document.getElementById('gameContainer');
 const startButton = document.getElementById('startButton');
 const countdownDisplay = document.getElementById('countdown');
 const scoreDisplay = document.getElementById('score');
+const progressBar = document.getElementById('progressBar');
 
 let countdown;
-let timeLeft = 20;
-countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
+// let timeLeft = 20;
+const totalTime = 10;
+countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
 const targetCount = 5;
 let gameActive = false;
@@ -55,12 +57,14 @@ function startGame() {
         createTarget();
     }
 
-    let timeLeft = 30; // Start countdown from 30 seconds
+    let timeLeft = totalTime; // Start countdown from total time
+    updateProgressBar(timeLeft);
     countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
 
     countdown = setInterval(() => {
         timeLeft--;
         countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
+        updateProgressBar(timeLeft);
 
         if (timeLeft <= 0) {
             stopGame();
@@ -78,6 +82,11 @@ function stopGame() {
 
 function updateScore() {
     scoreDisplay.textContent = `Score: ${score}`;
+}
+
+function updateProgressBar(timeLeft) {
+    const progress = (timeLeft / totalTime) * 100;
+    progressBar.style.width = `${progress}%`;
 }
 
 // Event listener to start the game
