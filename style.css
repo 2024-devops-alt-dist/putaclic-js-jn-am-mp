@@ -12,9 +12,16 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url(./img/cimetiere-halloween.png);
+    background-image: url(./img/cemetery.jpg);
     background-size: cover;
+    font-family: "DynaPuff", system-ui;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+          "wdth" 100;
 }
+
+
 
 #gameContainer {
     position: relative;
@@ -38,10 +45,25 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #ddd;
+    background-color: rgb(209, 79, 36);
     width: 500px;
     padding: 30px;
-    border-radius: 6px;
+    border-radius: 10px;
+}
+
+#difficultyBtns{
+    display: flex;
+    justify-content: space-around;
+ 
+    border-radius: 10px;
+}
+
+#difficultyBtns > *{
+    margin: 8px;
+    border-radius: 10px ;
+    padding: 8px 16px;
+    font-family: "DynaPuff", system-ui;
+    border: none;
 }
 
 #countdown, #score {
