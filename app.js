@@ -4,28 +4,80 @@ const countdownDisplay = document.getElementById('countdown');
 const scoreDisplay = document.getElementById('score');
 const progressBar = document.getElementById('progressBar');
 
+const easyModeButton = document.getElementById("easyMode");
+const normalModeButton = document.getElementById("normalMode");
+const hardModeButton = document.getElementById("hardMode");
+
 let countdown;
+let totalTime = 10;
 
 const targetLifecycle = 2000;
 
-const totalTime = 10;
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
-const targetCount = 5;
+let targetCount = 5;
 let gameActive = false;
 let score = 0;
 
 const targetTypes = [
-    { points: 1, color: 'red' },
-    { points: 5, color: 'green' },
-    { points: -2, color: 'black' }
+    { points: 1, imgUrl: "url('./img/sombrero.jpg')"},
+    { points: 5, imgUrl: "url('./img/pinata.jpg')" },
+    { points:-2,imgUrl: "url('./img/cactus.jpg')" }
 ];
+
+// Selection de difficulté
+easyModeButton.addEventListener("click", function() {
+  selectDifficulty("easy");
+});
+
+normalModeButton.addEventListener("click", function() {
+  selectDifficulty("normal");
+});
+
+hardModeButton.addEventListener("click", function() {
+  selectDifficulty("hard");
+});
+
+/**
+ * Défini la difficulté du jeu, change les variables en fonction de la difficulté et lance le jeu
+ */
+function selectDifficulty(difficulty) {
+  switch (difficulty) {
+    case 'easy':
+      targetCount = 3;
+      totalTime = 10;
+
+      startGame();
+      break;
+
+    case 'normal':
+      targetCount = 5;
+      totalTime = 7;
+
+      startGame();
+      break;
+
+    case 'hard':
+      targetCount = 7;
+      totalTime = 5;
+
+      startGame();
+      break;
+
+    default: 
+    alert("Pas de difficulté selectionnée");
+  }
+}
+
 function startGame() {
     gameActive = true;
     score = 0;
     updateScore();
     gameContainer.classList.remove('hide');
-    startButton.style.display = 'none';
+    easyModeButton.style.display = 'none';
+    normalModeButton.style.display = 'none';
+    hardModeButton.style.display = 'none';
+
     for (let i = 0; i < targetCount; i++) {
       createTarget();
     }
@@ -58,7 +110,7 @@ function createTarget() {
     const target = document.createElement('div');
     const targetType = targetTypes[Math.floor(Math.random() * targetTypes.length)];
     target.classList.add('target');
-    target.style.backgroundColor = targetType.color;
+    target.style.backgroundImage = targetType.imgUrl;
     randomizePosition(target);
     gameContainer.appendChild(target);
 
@@ -111,11 +163,11 @@ function randomizePosition(target) {
 function stopGame() {
     gameActive = false;
     clearInterval(countdown);
-    clearInterval(addTargets);
-    clearInterval(lifespan);
     countdownDisplay.textContent = "Time's up!";
     gameContainer.classList.add('hide');
-    startButton.style.display = 'block';
+    easyModeButton.style.display = 'block';
+    normalModeButton.style.display = 'block';
+    hardModeButton.style.display = 'block';
 }
 
 function updateScore() {
@@ -126,7 +178,3 @@ function updateProgressBar(timeLeft) {
     const progress = (timeLeft / totalTime) * 100;
     progressBar.style.width = `${progress}%`;
 }
-
-// Event listener to start the game
-startButton.addEventListener('click', startGame);
-
