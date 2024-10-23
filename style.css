@@ -27,6 +27,7 @@ body {
     background-color: red;
     border-radius: 50%;
     position: absolute;
+    transition: left 1s linear, top 1s linear;
 }
 
 #controls {

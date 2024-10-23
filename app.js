@@ -5,7 +5,6 @@ const scoreDisplay = document.getElementById('score');
 const progressBar = document.getElementById('progressBar');
 
 let countdown;
-// let timeLeft = 20;
 const totalTime = 10;
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
@@ -18,6 +17,31 @@ const targetTypes = [
     { points: 5, color: 'green' },
     { points: -2, color: 'black' }
 ];
+function startGame() {
+    gameActive = true;
+    score = 0;
+    updateScore();
+    gameContainer.classList.remove('hide');
+    startButton.style.display = 'none';
+
+    for (let i = 0; i < targetCount; i++) {
+        createTarget();
+    }
+
+    let timeLeft = totalTime; // Start countdown from total time
+    updateProgressBar(timeLeft);
+
+    countdown = setInterval(() => {
+        timeLeft--;
+        countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
+
+        updateProgressBar(timeLeft);
+
+        if (timeLeft <= 0) {
+            stopGame();
+        }
+    }, 1000); // Update countdown every second
+}
 
 function createTarget() {
     const target = document.createElement('div');
@@ -29,6 +53,7 @@ function createTarget() {
 
     target.addEventListener('click', () => {
             if (!gameActive) return;
+
             target.style.display = 'none';
             score = Math.max(0, score + targetType.points);
             updateScore();
@@ -44,32 +69,6 @@ function randomizePosition(target) {
     const y = Math.random() * (window.innerHeight - 50);
     target.style.left = `${x}px`;
     target.style.top = `${y}px`;
-}
-
-function startGame() {
-    gameActive = true;
-    score = 0;
-    updateScore();
-    gameContainer.classList.remove('hide');
-    startButton.style.display = 'none';
-
-    for (let i = 0; i < targetCount; i++) {
-        createTarget();
-    }
-
-    let timeLeft = totalTime; // Start countdown from total time
-    updateProgressBar(timeLeft);
-    countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
-
-    countdown = setInterval(() => {
-        timeLeft--;
-        countdownDisplay.textContent = `Time Left: ${timeLeft}s`;
-        updateProgressBar(timeLeft);
-
-        if (timeLeft <= 0) {
-            stopGame();
-        }
-    }, 1000); // Update countdown every second
 }
 
 function stopGame() {
