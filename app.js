@@ -9,7 +9,12 @@ const normalModeButton = document.getElementById("normalMode");
 const hardModeButton = document.getElementById("hardMode");
 
 let countdown;
+
+
+const targetLifecycle = 2000;
+
 let totalTime = 10;
+
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
 let targetCount = 5;
@@ -71,13 +76,23 @@ function startGame() {
     score = 0;
     updateScore();
     gameContainer.classList.remove('hide');
+
     easyModeButton.style.display = 'none';
     normalModeButton.style.display = 'none';
     hardModeButton.style.display = 'none';
 
+
     for (let i = 0; i < targetCount; i++) {
-        createTarget();
+      createTarget();
     }
+    //add new target every one second
+    addTargets = setInterval(() => {
+      let targetsNb = Math.floor(Math.random()*4)
+      for (let i = 0; i < targetsNb; i++){
+        createTarget();
+      }
+    },Math.random()*1500); 
+        
 
     let timeLeft = totalTime; // Start countdown from total time
     updateProgressBar(timeLeft);
@@ -95,6 +110,7 @@ function startGame() {
 }
 
 function createTarget() {
+
     const target = document.createElement('div');
     const targetType = targetTypes[Math.floor(Math.random() * targetTypes.length)];
     target.classList.add('target');
@@ -102,17 +118,43 @@ function createTarget() {
     randomizePosition(target);
     gameContainer.appendChild(target);
 
+    let targetTimer;
+
+    // If the target is not clicked after 5 seconds, it disappears
+    targetTimer = setTimeout(() => {
+        if (gameActive) {
+        target.style.display = 'none';
+        }
+    }, targetLifecycle);
+
+
+    
     target.addEventListener('click', () => {
             if (!gameActive) return;
-
+            //I removed the apparition of another target when it was successfully clicked
             target.style.display = 'none';
             score = Math.max(0, score + targetType.points);
-            updateScore();
+
+            clearTimeout(targetTimer); // Cancel the lifecycle timer when clicked
+
             setTimeout(() => {
                 randomizePosition(target);
                 target.style.display = 'block';
-            }, 500);
+                resetTargetLifecycle(target); // Reset the lifecycle
+              }, 500); // Reappear after 0.5s
+
+            updateScore();
     });
+
+}
+
+function resetTargetLifecycle(target) {
+    clearTimeout(targetTimer); // Clear previous timer
+    targetTimer = setTimeout(() => {
+        if (gameActive) {
+            target.style.display = 'none';
+        }
+    }, targetLifecycle);
 }
 
 function randomizePosition(target) {
