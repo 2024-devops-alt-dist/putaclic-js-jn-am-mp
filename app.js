@@ -5,6 +5,7 @@ const scoreDisplay = document.getElementById('score');
 const progressBar = document.getElementById('progressBar');
 
 let countdown;
+let lifespan;
 const totalTime = 10;
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
@@ -23,10 +24,17 @@ function startGame() {
     updateScore();
     gameContainer.classList.remove('hide');
     startButton.style.display = 'none';
-
     for (let i = 0; i < targetCount; i++) {
-        createTarget();
+      createTarget();
     }
+    //add new target every one second
+    addTargets = setInterval(() => {
+      let targetsNb = Math.floor(Math.random()*4)
+      for (let i = 0; i < targetsNb; i++){
+        createTarget();
+      }
+    },Math.random()*1500); 
+        
 
     let timeLeft = totalTime; // Start countdown from total time
     updateProgressBar(timeLeft);
@@ -50,18 +58,23 @@ function createTarget() {
     target.style.backgroundColor = targetType.color;
     randomizePosition(target);
     gameContainer.appendChild(target);
-
+    //create a target's lifespan to remove it after a random time
+    let lifeleft = 2000;
+    lifespan = setInterval(() => {
+      lifeleft = lifeleft - 0.5;
+      if (lifeleft <= 0) {
+        target.remove();
+    }
+    },500) ;
+    
     target.addEventListener('click', () => {
             if (!gameActive) return;
-
+            //I removed the apparition of another target when it was successfully clicked
             target.style.display = 'none';
             score = Math.max(0, score + targetType.points);
             updateScore();
-            setTimeout(() => {
-                randomizePosition(target);
-                target.style.display = 'block';
-            }, 500);
     });
+
 }
 
 function randomizePosition(target) {
@@ -74,6 +87,8 @@ function randomizePosition(target) {
 function stopGame() {
     gameActive = false;
     clearInterval(countdown);
+    clearInterval(addTargets);
+    clearInterval(lifespan);
     countdownDisplay.textContent = "Time's up!";
     gameContainer.classList.add('hide');
     startButton.style.display = 'block';
