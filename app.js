@@ -5,7 +5,9 @@ const scoreDisplay = document.getElementById('score');
 const progressBar = document.getElementById('progressBar');
 
 let countdown;
-let lifespan;
+
+const targetLifecycle = 2000;
+
 const totalTime = 10;
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
@@ -52,29 +54,51 @@ function startGame() {
 }
 
 function createTarget() {
+
     const target = document.createElement('div');
     const targetType = targetTypes[Math.floor(Math.random() * targetTypes.length)];
     target.classList.add('target');
     target.style.backgroundColor = targetType.color;
     randomizePosition(target);
     gameContainer.appendChild(target);
-    //create a target's lifespan to remove it after a random time
-    let lifeleft = 2000;
-    lifespan = setInterval(() => {
-      lifeleft = lifeleft - 0.5;
-      if (lifeleft <= 0) {
-        target.remove();
-    }
-    },500) ;
+
+    let targetTimer;
+
+    // If the target is not clicked after 5 seconds, it disappears
+    targetTimer = setTimeout(() => {
+        if (gameActive) {
+        target.style.display = 'none';
+        }
+    }, targetLifecycle);
+
+
     
     target.addEventListener('click', () => {
             if (!gameActive) return;
             //I removed the apparition of another target when it was successfully clicked
             target.style.display = 'none';
             score = Math.max(0, score + targetType.points);
+
+            clearTimeout(targetTimer); // Cancel the lifecycle timer when clicked
+
+            setTimeout(() => {
+                randomizePosition(target);
+                target.style.display = 'block';
+                resetTargetLifecycle(target); // Reset the lifecycle
+              }, 500); // Reappear after 0.5s
+
             updateScore();
     });
 
+}
+
+function resetTargetLifecycle(target) {
+    clearTimeout(targetTimer); // Clear previous timer
+    targetTimer = setTimeout(() => {
+        if (gameActive) {
+            target.style.display = 'none';
+        }
+    }, targetLifecycle);
 }
 
 function randomizePosition(target) {
