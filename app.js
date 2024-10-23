@@ -4,11 +4,15 @@ const countdownDisplay = document.getElementById('countdown');
 const scoreDisplay = document.getElementById('score');
 const progressBar = document.getElementById('progressBar');
 
+const easyModeButton = document.getElementById("easyMode");
+const normalModeButton = document.getElementById("normalMode");
+const hardModeButton = document.getElementById("hardMode");
+
 let countdown;
-const totalTime = 10;
+let totalTime = 10;
 countdownDisplay.textContent = `Time Left: ${totalTime}s`;
 
-const targetCount = 5;
+let targetCount = 5;
 let gameActive = false;
 let score = 0;
 
@@ -17,12 +21,59 @@ const targetTypes = [
     { points: 5, color: 'green' },
     { points: -2, color: 'black' }
 ];
+
+// Selection de difficulté
+easyModeButton.addEventListener("click", function() {
+  selectDifficulty("easy");
+});
+
+normalModeButton.addEventListener("click", function() {
+  selectDifficulty("normal");
+});
+
+hardModeButton.addEventListener("click", function() {
+  selectDifficulty("hard");
+});
+
+/**
+ * Défini la difficulté du jeu, change les variables en fonction de la difficulté et lance le jeu
+ */
+function selectDifficulty(difficulty) {
+  switch (difficulty) {
+    case 'easy':
+      targetCount = 3;
+      totalTime = 10;
+
+      startGame();
+      break;
+
+    case 'normal':
+      targetCount = 5;
+      totalTime = 7;
+
+      startGame();
+      break;
+
+    case 'hard':
+      targetCount = 7;
+      totalTime = 5;
+
+      startGame();
+      break;
+
+    default: 
+    alert("Pas de difficulté selectionnée");
+  }
+}
+
 function startGame() {
     gameActive = true;
     score = 0;
     updateScore();
     gameContainer.classList.remove('hide');
-    startButton.style.display = 'none';
+    easyModeButton.style.display = 'none';
+    normalModeButton.style.display = 'none';
+    hardModeButton.style.display = 'none';
 
     for (let i = 0; i < targetCount; i++) {
         createTarget();
@@ -76,7 +127,9 @@ function stopGame() {
     clearInterval(countdown);
     countdownDisplay.textContent = "Time's up!";
     gameContainer.classList.add('hide');
-    startButton.style.display = 'block';
+    easyModeButton.style.display = 'block';
+    normalModeButton.style.display = 'block';
+    hardModeButton.style.display = 'block';
 }
 
 function updateScore() {
@@ -87,7 +140,3 @@ function updateProgressBar(timeLeft) {
     const progress = (timeLeft / totalTime) * 100;
     progressBar.style.width = `${progress}%`;
 }
-
-// Event listener to start the game
-startButton.addEventListener('click', startGame);
-
