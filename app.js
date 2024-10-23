@@ -13,9 +13,9 @@ let gameActive = false;
 let score = 0;
 
 const targetTypes = [
-    { points: 1, color: 'red' },
-    { points: 5, color: 'green' },
-    { points: -2, color: 'black' }
+    { points: 1, imgUrl: "url('./img/sombrero.jpg')"},
+    { points: 5, imgUrl: "url('./img/pinata.jpg')" },
+    { points:-2,imgUrl: "url('./img/cactus.jpg')" }
 ];
 function startGame() {
     gameActive = true;
@@ -47,7 +47,7 @@ function createTarget() {
     const target = document.createElement('div');
     const targetType = targetTypes[Math.floor(Math.random() * targetTypes.length)];
     target.classList.add('target');
-    target.style.backgroundColor = targetType.color;
+    target.style.backgroundImage = targetType.imgUrl;
     randomizePosition(target);
     gameContainer.appendChild(target);
 
